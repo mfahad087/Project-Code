@@ -1,0 +1,54 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class AuthManager {
+    private Map<String, User> users = new HashMap<>();
+    
+    public AuthManager() {
+        // Initialize with sample users
+        users.put("admin", new Admin("admin", "admin123"));
+        users.put("instructor", new Instructor("instructor", "teach123"));
+        users.put("student", new Student("student", "learn123"));
+    }
+
+    public User handleAuthentication(Scanner scanner) {
+        UI.displayAuthMenu();
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        
+        if (choice == 1) {
+            return registerUser(scanner);
+        } else if (choice == 2) {
+            return loginUser(scanner);
+        }
+        return null;
+    }
+
+    private User registerUser(Scanner scanner) {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        
+        User newUser = new Student(username, password);
+        users.put(username, newUser);
+        UI.showSuccess("Registration successful!");
+        return newUser;
+    }
+
+    private User loginUser(Scanner scanner) {
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        
+        User user = users.get(username);
+        if (user != null && user.getPassword().equals(password)) {
+            UI.showSuccess("Login successful as " + user.getRole() + "!");
+            return user;
+        }
+        UI.showError("Invalid credentials!");
+        return null;
+    }
+}
